@@ -1,0 +1,76 @@
+Notes on the C type grammar (adapted from Microsoft's reference of the MSVC
+  compiler, see
+  https://learn.microsoft.com/en-us/cpp/c-language/c-language-syntax-summary?view=msvc-170).
+
+Example declarations that should be parseable:
+int x;
+long long *x;
+signed long long *const *const x;
+int x[20];
+float *x[20]; // array of 20 pointers to float
+float (*x)[20]; // pointer to array of 20 floats
+
+The grammar is overly permissive: all valid C types can be parsed with this
+  grammar, but the grammar will also successfully parse invalid types.
+  Additional validation will be required.
+
+Grammar in EBNF-like syntax:
+
+declaration
+  = specifiers declarator ';'?
+
+specifiers
+  = specifier specifiers?
+  | qualifiers
+
+specifier
+  = named-spec
+  | builtin-spec
+
+named-spec
+  = ( "struct" | "enum" | "union" )? identifier
+
+builtin-spec
+  = "char" | "short" | "int" | "long"
+  | "float" | "double"
+  | "signed" | "unsigned"
+
+qualifier
+  = "const" | "volatile" | "restrict"
+
+declarator
+  = pointer? base-declarator
+
+pointer
+  = '*' qualifier* pointer?
+
+base-declarator 
+  = identifier
+  | '(' declarator ')'
+  | base-declarator '[' array-len? ']'
+
+array-len
+  = identifier | number
+
+identifier = [a-zA-Z_][a-zA-Z0-9_]*
+
+number = [1-9][0-9]*
+
+
+Example expansion:
+declaration
+specifiers declarator ';'
+specifier declarator ';'
+builtin-spec declarator ';'
+"float" declarator ';'
+"float" base-declarator ';'
+"float" base-declarator '[' array-len ']' ';'
+"float" base-declarator '[' number ']' ';'
+"float" base-declarator "[20];"
+"float" '(' declarator ')' "[20];"
+"float" '(' pointer base-declarator ')' "[20];"
+"float" '(' '*' base-declarator ')' "[20];"
+"float" '(' '*' identifier ')' "[20];"
+"float" '(' '*' "x" ')' "[20];"
+"float (*x)[20];"
+
