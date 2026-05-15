@@ -1,0 +1,54 @@
+Revised, more restrictive grammar:
+
+declaration
+  = qualifier* specifier qualifier* declarator ';'?
+
+specifier
+  = named-spec
+  | builtin-spec
+
+named-spec
+  = ( "struct" | "enum" | "union" )? identifier
+
+builtin-spec
+  = ( "signed" | "unsigned" )? integral-spec
+  | "float" | "long"? "double"
+
+integral-spec
+  = "char" | "short" | "int" | "long"? "long"
+
+declarator
+  = pointer "void"
+  | pointer? base-declarator
+
+base-declarator
+  = identifier
+  | '(' declarator ')'
+  | base-declarator '[' number ']'
+  | base-declarator '(' parameter* ')'
+
+parameter
+  = specifier param-declarator?
+
+param-declarator
+  = pointer "void"
+  | pointer? base-parameter
+
+base-param-decl
+  = '(' parameter ')'
+  | base-parameter '[' number ']'
+  | base-parameter '( parameter * ')'
+
+pointer
+  = '*' ptr-qualifier* pointer?
+
+ptr-qualifier
+  = "restrict"
+  | qualifier
+
+qualifier
+  = "const" | "volatile"
+
+identifier = [a-zA-Z_][a-zA-Z0-9_]*
+
+number = [1-9][0-9]*

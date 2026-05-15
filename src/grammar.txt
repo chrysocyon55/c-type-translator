@@ -6,9 +6,10 @@ Example declarations that should be parseable:
 int x;
 long long *x;
 signed long long *const *const x;
-int x[20];
+const int x[20];
 float *x[20]; // array of 20 pointers to float
 float (*x)[20]; // pointer to array of 20 floats
+void **x[2][5];
 
 The grammar is overly permissive: all valid C types can be parsed with this
   grammar, but the grammar will also successfully parse invalid types.
@@ -21,7 +22,7 @@ declaration
 
 specifiers
   = specifier specifiers?
-  | qualifiers
+  | qualifier+
 
 specifier
   = named-spec
@@ -33,6 +34,7 @@ named-spec
 builtin-spec
   = "char" | "short" | "int" | "long"
   | "float" | "double"
+  | "void"
   | "signed" | "unsigned"
 
 qualifier
