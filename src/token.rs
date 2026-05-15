@@ -28,7 +28,7 @@ pub enum Token {
     NumLiteral(u32),
     Semicolon,
     Comma,
-    Star, 
+    Star,
     LeftParen,
     RightParen,
     LeftBracket,
@@ -62,7 +62,18 @@ impl FromStr for Token {
 
 impl ToString for Token {
     fn to_string(&self) -> String {
-        todo!()
+        match self {
+            Self::Keyword(keyword) => keyword.to_string(),
+            Self::Identifier(ident) => ident.clone(),
+            Self::NumLiteral(n) => n.to_string(),
+            Self::Semicolon => ";".to_string(),
+            Self::Comma => ",".to_string(),
+            Self::Star => "*".to_string(),
+            Self::LeftParen => "(".to_string(),
+            Self::RightParen => ")".to_string(),
+            Self::LeftBracket => "[".to_string(),
+            Self::RightBracket => "]".to_string(),
+        }
     }
 }
 
@@ -79,7 +90,7 @@ pub enum Keyword {
     Long,
     Float,
     Double,
-    Signed, 
+    Signed,
     Unsigned,
     Const,
     Volatile,
@@ -129,6 +140,7 @@ impl ToString for Keyword {
             Self::Const => "const",
             Self::Volatile => "volatile",
             Self::Restrict => "restrict",
-        }.to_string()
+        }
+        .to_string()
     }
 }
