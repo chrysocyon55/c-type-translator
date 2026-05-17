@@ -4,20 +4,32 @@ use std::str::FromStr;
 
 use anyhow::anyhow;
 
+/// Determines whether the given char can be the start of a C identifier or
+/// keyword.
+pub const fn is_identifier_start(c: char) -> bool {
+    c == '_' || c.is_ascii_alphabetic()
+}
+
+/// Determines whether the given char can be the inner character of a C
+/// identifier or keyword.
+pub const fn is_identifier_inner(c: char) -> bool {
+    c == '_' || c.is_ascii_alphanumeric() 
+}
+
 /// Determines whether the given string is a valid C identifier.
 ///
 /// C identifiers consist of one or more letters, digits, or underscores,
 /// and cannot start with a digit.
-fn is_identifier(s: &str) -> bool {
+pub fn is_identifier(s: &str) -> bool {
     if s.is_empty() {
         return false;
     }
     let mut chars = s.chars();
     let first = chars.next().unwrap();
-    if !(first == '_' || first.is_ascii_alphabetic()) {
+    if !is_identifier_start(first) {
         return false;
     }
-    chars.all(|c| c == '_' || c.is_ascii_alphanumeric())
+    chars.all(|c| is_identifier_inner(c))
 }
 
 /// A token of C source.
