@@ -87,7 +87,7 @@ fn scan_token(source: &mut &str) -> Result<Token> {
         return Ok(token);
     } else {
         let c = source.chars().next().expect("should never be empty");
-        return Err(anyhow!("invalid char (`{c}`) during scanning"))
+        return Err(anyhow!("invalid char `{c}` during scanning"))
     }
 }
 
