@@ -4,6 +4,7 @@ use anyhow::Result;
 
 mod scanner;
 mod token;
+mod parser;
 
 fn main() -> Result<()> {
     // Test the scanner with user input.
@@ -11,7 +12,7 @@ fn main() -> Result<()> {
     io::stdin().read_line(&mut buf)?;
     match scanner::into_tokens(&buf) {
         Ok(tokens) => {
-            dbg!(tokens);
+    dbg!(tokens);
         }
         Err(e) => println!("{e}"),
     }
