@@ -150,7 +150,11 @@ impl CType {
     /// Produces an English-language description of this type.
     pub fn translate(&self) -> String {
         match self {
-            Self::Direct { is_const, is_volatile, type_ } => {
+            Self::Direct {
+                is_const,
+                is_volatile,
+                type_,
+            } => {
                 let mut s = String::new();
                 if *is_const {
                     s += "const ";
@@ -159,8 +163,13 @@ impl CType {
                     s += "volatile ";
                 }
                 s + &type_.to_string()
-            },
-            Self::Pointer { is_const, is_volatile, is_restrict, pointee } => {
+            }
+            Self::Pointer {
+                is_const,
+                is_volatile,
+                is_restrict,
+                pointee,
+            } => {
                 let mut s = String::new();
                 if *is_const {
                     s += "const ";
@@ -173,23 +182,25 @@ impl CType {
                 }
                 s += "pointer to a(n) ";
                 match pointee {
-                    Either::Left(_void) => {
-                        s + "unspecified type"
-                    }
-                    Either::Right(pointee) => {
-                        s + &pointee.translate()
-                    }
+                    Either::Left(_void) => s + "unspecified type",
+                    Either::Right(pointee) => s + &pointee.translate(),
                 }
-            },
+            }
             Self::Array { len, pointee } => {
                 format!("{len}-element array of ") + &pointee.translate()
-            },
+            }
             Self::Function { ret_type, args } => {
                 let mut s = "function of ".to_string();
                 match args.len() {
                     0 => s += "0 arguments ",
                     1 => s += &format!("1 argument ({}) ", args[0].translate()),
-                    2 => s += &format!("2 arguments ({} and {}) ", args[0].translate(), args[1].translate()),
+                    2 => {
+                        s += &format!(
+                            "2 arguments ({} and {}) ",
+                            args[0].translate(),
+                            args[1].translate()
+                        )
+                    }
                     n => {
                         s += &format!("{n} arguments (");
                         for i in 0..(n - 2) {
@@ -205,10 +216,10 @@ impl CType {
                     Either::Left(_void) => s + "nothing",
                     Either::Right(ret_type) => s + &format!("a(n) {}", ret_type.translate()),
                 }
-            },
+            }
         }
     }
-} 
+}
 
 /// A declaration of a C type.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
