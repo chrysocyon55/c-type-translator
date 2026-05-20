@@ -4,6 +4,7 @@ use anyhow::Result;
 
 mod scanner;
 mod token;
+mod ast;
 mod parser;
 
 fn main() -> Result<()> {
