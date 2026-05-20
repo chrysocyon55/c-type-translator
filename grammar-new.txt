@@ -38,6 +38,7 @@ base-param-decl
   = '(' parameter ')'
   | base-parameter '[' number ']'
   | base-parameter '( parameters? ')'
+  | base-parameter '(' "void" ')'
 
 parameters
   = parameter ( ',' parameter )*
