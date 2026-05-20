@@ -187,7 +187,7 @@ impl CType {
                 }
             }
             Self::Array { len, pointee } => {
-                format!("{len}-element array of ") + &pointee.translate()
+                format!("{len}-element array of type ") + &pointee.translate()
             }
             Self::Function { ret_type, args } => {
                 let mut s = "function of ".to_string();
@@ -232,5 +232,63 @@ impl Declaration {
     /// Produces an English-language description of this declaration's type.
     pub fn translate(&self) -> String {
         format!("{} is a(n) {}", self.ident, self.type_.translate())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn translate_asts() {
+        let decl = Declaration {
+            type_: CType::Direct {
+                is_const: true,
+                is_volatile: false,
+                type_: DirectType::Numeric(NumericType::Integral {
+                    sign: Signedness::Unsigned,
+                    inner: IntegralType::Int,
+                }),
+            },
+            ident: "x".to_string(),
+        };
+        assert_eq!(decl.translate(), "x is a(n) const unsigned int");
+
+        let decl = Declaration {
+            type_: CType::Pointer {
+                is_const: false,
+                is_volatile: true,
+                is_restrict: true,
+                pointee: Either::Right(Box::new(CType::Direct {
+                    is_const: true,
+                    is_volatile: false,
+                    type_: DirectType::Compound {
+                        kind: CompoundKind::Struct,
+                        name: "point".to_string(),
+                    },
+                })),
+            },
+            ident: "p".to_string(),
+        };
+        assert_eq!(
+            decl.translate(),
+            "p is a(n) volatile restrict pointer to a(n) const struct point"
+        );
+
+        let decl = Declaration {
+            type_: CType::Array {
+                len: 7,
+                pointee: Box::new(CType::Direct {
+                    is_const: false,
+                    is_volatile: false,
+                    type_: DirectType::Numeric(NumericType::Double),
+                }),
+            },
+            ident: "arr".to_string(),
+        };
+        assert_eq!(
+            decl.translate(),
+            "arr is a(n) 7-element array of type double"
+        );
     }
 }
